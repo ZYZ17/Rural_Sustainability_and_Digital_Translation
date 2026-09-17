@@ -70,8 +70,8 @@
 
   function waterSet(grid) {
     var wet = {};
-    var stack = [[0, 2]];
-    wet["0,2"] = true;
+    var stack = [[2, 0]];
+    wet["2,0"] = true;
     while (stack.length) {
       var cur = stack.pop();
       var r = cur[0], c = cur[1];
@@ -100,8 +100,8 @@
   Game.BrainPipe = {
     title: "水管旋轉 · 修復水車",
     type: "brain",
-    p1hint: "點擊左半（左三排）的水管旋轉",
-    p2hint: "方向鍵移動、空白鍵旋轉右半的水管",
+    p1hint: "水源在你這邊！點擊左三排的水管，把水從左側「入水口」接出來",
+    p2hint: "方向鍵移動、空白鍵旋轉右三排水管，把水送到右側「出水口」",
     clearMsg: "水流暢通！水車開始轉動了！",
 
     mount: function (ctx) {
@@ -116,7 +116,7 @@
 
       ctx.body.innerHTML =
         '<div class="pipe-grid" id="pipe-grid"></div>' +
-        '<div class="level-note" id="pipe-note">讓水從左側的水車（藍色入口）流到右側的出口！</div>';
+        '<div class="level-note" id="pipe-note">💧 水從左側「入水口」流進，把水管一路接到右側「出水口」，水車就會轉動！</div>';
 
       var gridEl = Game.$("#pipe-grid");
       var noteEl = Game.$("#pipe-note");
@@ -129,6 +129,8 @@
           el.className = "pipe-cell";
           el.setAttribute("data-r", r);
           el.setAttribute("data-c", c);
+          if (r === 2 && c === 0) el.classList.add("inlet");
+          if (r === 2 && c === 5) el.classList.add("outlet");
           el.innerHTML = drawSvg(grid[r][c]);
           gridEl.appendChild(el);
           cells.push(el);
@@ -170,6 +172,8 @@
         var cell = grid[r][c];
         if (cell.fixed) {
           Game.Audio.wrong();
+          if (r === 2 && c === 0) noteEl.textContent = "這裡是「入水口」，固定不能轉，從它右邊的管子開始接！";
+          else noteEl.textContent = "這裡是「出水口」，固定不能轉，把水接到這裡就過關了！";
           return;
         }
         cell.rot = (cell.rot + 1) % 4;

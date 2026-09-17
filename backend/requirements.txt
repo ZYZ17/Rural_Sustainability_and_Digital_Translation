@@ -1,0 +1,7 @@
+# 後端 Python 依賴
+python-dotenv>=1.0.0
+requests>=2.31.0
+
+# 測試
+pytest>=8.0.0
+pytest-cov>=5.0.0
